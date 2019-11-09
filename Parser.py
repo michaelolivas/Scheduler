@@ -1,8 +1,3 @@
-import pandas as pd
-import json
-import sys, getopt
-
-
 class Parser:
     def __init__(self, task):
         self.task = str(task[0])

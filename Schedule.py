@@ -28,7 +28,13 @@ class Scheduling(object):
 
 
     def edf(self, task):
-        pass
+        queue = [] #task queue
+        schedule = [] #output schedule
+        current = '' #current task
+        previous = '' #previous task
+
+        
+
 
     def rm(self, task):
         pass

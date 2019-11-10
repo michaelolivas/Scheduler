@@ -8,6 +8,6 @@ class Parser:
         self.wcet384 = int(task[5]) 
 
     def __str__(self):
-        return ('Task: {0}  Deadline: {1}  WCET1188: {2}  WCET918: {3}  WCET648: {4}  WCET384: {4}'
+        return ('Task: {0}  Deadline: {1}  WCET1188: {2}  WCET918: {3}  WCET648: {4}  WCET384: {5}'
                 .format(self.task, self.deadline, self.wcet1188, self.wcet918, self.wcet648, self.wcet384))
 

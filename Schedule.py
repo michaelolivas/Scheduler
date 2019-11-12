@@ -1,7 +1,11 @@
 import copy, operator
 from itertools import groupby
+<<<<<<< HEAD
 from Queue import PriorityQueue
 from Parser import Parser
+=======
+import Parser as task
+>>>>>>> started EDF, doesn't work
 
 
 class MyPriorityQueue(PriorityQueue, Parser):
@@ -57,7 +61,11 @@ class Scheduling(object):
         current = '' #current task
         previous = '' #previous task
 
-        
+        for time in range (task[1]):
+            for t in task.keys():
+                if time == task[2]:
+                    queue.append(t)
+        return schedule
 
 
     def rm(self, task):

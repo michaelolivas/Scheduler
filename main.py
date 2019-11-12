@@ -5,8 +5,7 @@ from Parser import Parser, Header
 def Tasks(inputFile):
     tasks = [line.strip('\r\n').split(' ') for line in open(inputFile)]
     header = Header(tasks[0])
-    print(header)
-    return tasks
+    return tasks, header
 
 def Queue(tasks):
     q = []
@@ -16,17 +15,30 @@ def Queue(tasks):
 
 def order(q):
     q.sort(key=operator.attrgetter("deadline"), reverse=True)
+    return q
 
 def edf(tasks, header):
     q = Queue(tasks)
-
+    q = order(q)
+    for sec in range(header.Exetime):
+        q = order(q)
+        process = q.pop()
+        if(process.entry > sec):
+            print("{0} IDLE {1}".format(sec, sec+1))
+        if(process.entry <= sec):
+            process.runTime = process.runTime + 1
+            print(sec, process.task, process.runTime+sec)
+        if (process.runTime == process.wcet1188):
+            process.runTime = 0
+            process.entry = process.entry + process.deadline
+            process.deadline = process.deadline + process.entry
+        
+        q.append(process)
 
 def main(argv):
     inputFile = ''
     sched = ''
     EE = False 
-    task = []
-    work = []
 
     try:
         opts, arg = getopt.getopt(argv,"hi:s:e", ["help","inFile=", "schedule=", "energy"])
@@ -44,8 +56,8 @@ def main(argv):
         if opt in ("-e", "--energy"):
             EE = True
     
-    tasks = Tasks(inputFile)
-    header = tasks[0]
+    tasks, header = Tasks(inputFile)
+    
     if(sched == 'edf'):
         edf(tasks, header)
     

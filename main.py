@@ -1,16 +1,17 @@
 import sys, getopt, operator
-from Parser import Parser
+from Parser import Parser, Header
 
 
 def Tasks(inputFile):
     tasks = [line.strip('\r\n').split(' ') for line in open(inputFile)]
-    header = tasks[0]
+    header = Header(tasks[0])
+    print(header)
     return tasks
 
 def Queue(tasks):
     q = []
     for t in tasks[1:]:
-        q.append( Parser(t, tasks[0][6]) )
+        q.append( Parser(t) )
     return q
 
 def order(q):
@@ -18,6 +19,7 @@ def order(q):
 
 def edf(tasks, header):
     q = Queue(tasks)
+
 
 def main(argv):
     inputFile = ''

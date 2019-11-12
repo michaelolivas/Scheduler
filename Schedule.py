@@ -1,5 +1,6 @@
 import copy
 from itertools import groupby
+import Parser as task
 
 class Scheduling(object):
     def __init__ (self, num_tasks: int, exec_time: int, p1188MHz: int, p918MHz: int,
@@ -33,7 +34,11 @@ class Scheduling(object):
         current = '' #current task
         previous = '' #previous task
 
-        
+        for time in range (task[1]):
+            for t in task.keys():
+                if time == task[2]:
+                    queue.append(t)
+        return schedule
 
 
     def rm(self, task):

@@ -1,6 +1,30 @@
-import copy
+import copy, operator
 from itertools import groupby
+from Queue import PriorityQueue
+from Parser import Parser
 
+
+class MyPriorityQueue(PriorityQueue, Parser):
+    def __init__ (self):
+        self.q = []
+
+    def put(self, object):
+        self.q.append(Parser(object))
+    
+    def cmp_priority(a, b):
+        return cmp(a.deadline, b.deadline)
+
+    def sort(self):
+        self.q.sort(key=operator.attrgetter("deadline"))
+
+    def get(self):
+        return self.q.pop()
+    
+    def __str__(self):
+        for l in self.q:
+            Parser.__str__(l)
+            print('\n')
+'''
 class Scheduling(object):
     def __init__ (self, num_tasks: int, exec_time: int, p1188MHz: int, p918MHz: int,
                 p648MHz: int, p384MHz: int, p_idle: int, type_sch: str, EnEff: bool):
@@ -44,3 +68,4 @@ class Scheduling(object):
 
     def rm_EnEff(self, task):
         pass
+'''

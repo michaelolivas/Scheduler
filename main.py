@@ -1,13 +1,23 @@
-import sys, getopt
-import numpy as np
+import sys, getopt, operator
 from Parser import Parser
 
 
 def Tasks(inputFile):
     tasks = [line.strip('\r\n').split(' ') for line in open(inputFile)]
-    work = [Parser(tasks[x]) for x in range(len(tasks))]
-    return tasks, work
-        
+    header = tasks[0]
+    return tasks
+
+def Queue(tasks):
+    q = []
+    for t in tasks[1:]:
+        q.append( Parser(t, tasks[0][6]) )
+    return q
+
+def order(q):
+    q.sort(key=operator.attrgetter("deadline"), reverse=True)
+
+def edf(tasks, header):
+    q = Queue(tasks)
 
 def main(argv):
     inputFile = ''
@@ -31,8 +41,12 @@ def main(argv):
             sched = arg
         if opt in ("-e", "--energy"):
             EE = True
-
-    tasks , work = Tasks(inputFile)
+    
+    tasks = Tasks(inputFile)
+    header = tasks[0]
+    if(sched == 'edf'):
+        edf(tasks, header)
+    
 
 if __name__== "__main__":
   main(sys.argv[1:])

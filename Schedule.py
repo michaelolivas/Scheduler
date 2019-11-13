@@ -1,15 +1,7 @@
 import copy, operator
 from itertools import groupby
-<<<<<<< HEAD
-<<<<<<< HEAD
 from Queue import PriorityQueue
 from Parser import Parser
-=======
-import Parser as task
->>>>>>> started EDF, doesn't work
-=======
-import Parser as task
->>>>>>> e96462464ac369e0a79b12865faea3da178623ba
 
 
 class MyPriorityQueue(PriorityQueue, Parser):

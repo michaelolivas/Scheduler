@@ -50,26 +50,19 @@ def edf(tasks, header):
             process.deadline = process.deadline + process.period
         q = pull + q
 
-def rm (tasks, header):
+def rm(tasks, header):
     q = queue(tasks)
     num = len(q)
     power = header.power1188
-    print(power)
     for seconds in range(header.Exetime):
-        idle = False
         q = sort_edf(q)
         pull = []
-        for i in range(num):
-            process = q.pop()
-            if(process.entry > seconds):
-                pull.append(process)
-                if(i == num-1):
-                    idle = True
-                    break
-                
-            if(process.entry <= seconds):
-                pull.append(process)
-                break
+        process = q.pop()
+        print(process)
+        pull.append(process)
+
+
+    
 
 
 def main(argv):

@@ -14,7 +14,7 @@ def queue(tasks):
     return q
 
 def sort_edf(q):
-    q.sort(key=operator.attrgetter("deadline", "wcet1188"), reverse=True)
+    q.sort(key=operator.attrgetter("deadline", "wcet1188","entry"), reverse=True)
     return q
 
 def edf(tasks, header):
@@ -22,6 +22,7 @@ def edf(tasks, header):
     num = len(q)
     power = header.power1188 * 0.001
     exe_time = 0
+    start_time = 0
     for sec in range(header.Exetime):
         idle = False 
         new_process = False      
@@ -29,26 +30,31 @@ def edf(tasks, header):
         pull = []
         for i in range(num):
             process = q.pop()
-            if(sec == 0 ): previous_process = process
-            if(previous_process == process):
-                break
-            if (previous_process != process):
-                new_process = True
+            if(sec == 0): 
+                start_time = sec
                 previous_process = process
+            if(process.entry <= sec):
+                pull.append(process)
+                if (previous_process != process):
+                    new_process = True
+                break
             if(process.entry > sec):
                 pull.append(process)
                 if(i == num-1):
                     idle = True
+                    if(previous_process.entry<sec): new_process = True
                     break
-            if(process.entry <= sec):
-                pull.append(process)
-                break
         if(previous_process == process and not new_process):
+            previous_process.runTime = previous_process.runTime + 1
             exe_time = exe_time + 1
         if(new_process):
             previous_process.runTime = previous_process.runTime + 1
-            print(sec, previous_process.task, exe_time)
+            exe_time = exe_time + 1
+            exe_power = power * exe_time
+            print(start_time+1, previous_process.task, exe_time, exe_power)
+            start_time = sec
             exe_time = 0
+            previous_process = process
         if(idle):
             q = pull + q 
             print("{0} IDLE {1}".format(sec, sec+1))
@@ -58,6 +64,7 @@ def edf(tasks, header):
             process.runTime = 0
             process.entry = process.deadline
             process.deadline = process.deadline + process.period
+            
 
         q = pull + q
 

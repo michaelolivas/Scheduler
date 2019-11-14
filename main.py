@@ -59,11 +59,33 @@ def rm(tasks, header):
         q = sort_edf(q)
         pull = []
         for i in range(num):
-            
-        
+            process = q.pop()
+            #print(process)
+            if (process.entry > seconds):
+                pull.append(process)
+                if (i == num - 1):
+                    idle = True
+                    break
+            if (process.entry <= seconds):
+                if (seconds == process.entry):
+                    pull.append(process)
+                    break
+                else:
+                    print("failed")
+                    break
+        if (idle):
+            q = pull + q
+            print ("{0} IDLE".format(seconds))
+            continue
+        if(process.entry <= seconds):
+            process.runTime = process.runTime + 1
+            print(seconds, process.task)
+        if (process.runTime == process.wcet1188):
+            process.runTime = 0
+            process.entry = process.deadline
+            process.deadline = process.deadline + process.period
+        q = pull + q
 
-
-    
 
 
 def main(argv):

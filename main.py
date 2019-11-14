@@ -57,9 +57,8 @@ def rm(tasks, header):
     for seconds in range(header.Exetime):
         q = sort_edf(q)
         pull = []
-        process = q.pop()
-        print(process)
-        pull.append(process)
+        
+        
 
 
     

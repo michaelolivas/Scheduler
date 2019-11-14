@@ -55,9 +55,11 @@ def rm(tasks, header):
     num = len(q)
     power = header.power1188
     for seconds in range(header.Exetime):
+        idle = False
         q = sort_edf(q)
         pull = []
-        
+        for i in range(num):
+            
         
 
 

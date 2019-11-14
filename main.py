@@ -25,7 +25,7 @@ def edf(tasks, header):
     start_time = 0
     end_time = 0
     idle = False 
-    for sec in range(header.Exetime):
+    for sec in range(0, header.Exetime):
         if(idle and sec in range(end_time)): continue
         new_process = False      
         q = sort_edf(q)
@@ -51,12 +51,7 @@ def edf(tasks, header):
         if(previous_process == process and not new_process):
             previous_process.runTime = previous_process.runTime + 1
             exe_time = exe_time + 1
-        if(new_process or len(pull)==num):
-            exe_power = power * exe_time
-            print(start_time+1, previous_process.task, exe_time, exe_power)
-            start_time = sec
-            exe_time = 0
-            previous_process = process
+            if(previous_process.runTime == previous_process.wcet1188): new_process = True
         if(idle):
             print("{0} IDLE {1}".format(sec, end_time))
             q = pull + q 
@@ -65,7 +60,12 @@ def edf(tasks, header):
             process.runTime = 0
             process.entry = process.deadline
             process.deadline = process.deadline + process.period
-            
+        if(new_process or len(pull)==num):
+            exe_power = power * exe_time
+            if(exe_time != 0): print(start_time, previous_process.task,exe_time, exe_power)
+            start_time = sec
+            exe_time = 0
+            previous_process = process
         idle = False 
         q = pull + q
 

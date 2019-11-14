@@ -23,13 +23,17 @@ def edf(tasks, header):
     power = header.power1188 * 0.001
     exe_time = 0
     start_time = 0
+    end_time = 0
+    idle = False 
     for sec in range(header.Exetime):
-        idle = False 
+        if(idle and sec in range(end_time)): continue
         new_process = False      
         q = sort_edf(q)
         pull = []
         for i in range(num):
             process = q.pop()
+            if(i == 0):
+                end_time = process.entry
             if(sec == 0): 
                 start_time = sec
                 previous_process = process
@@ -37,35 +41,32 @@ def edf(tasks, header):
                 pull.append(process)
                 if (previous_process != process):
                     new_process = True
+                    idle = False 
                 break
             if(process.entry > sec):
                 pull.append(process)
                 if(i == num-1):
-                    idle = True
-                    if(previous_process.entry<sec): new_process = True
+                    idle = True 
                     break
         if(previous_process == process and not new_process):
             previous_process.runTime = previous_process.runTime + 1
             exe_time = exe_time + 1
-        if(new_process):
-            previous_process.runTime = previous_process.runTime + 1
-            exe_time = exe_time + 1
+        if(new_process or len(pull)==num):
             exe_power = power * exe_time
             print(start_time+1, previous_process.task, exe_time, exe_power)
             start_time = sec
             exe_time = 0
             previous_process = process
         if(idle):
+            print("{0} IDLE {1}".format(sec, end_time))
             q = pull + q 
-            print("{0} IDLE {1}".format(sec, sec+1))
             continue
-
-        if (process.runTime == process.wcet1188):
+        if(process.runTime == process.wcet1188):
             process.runTime = 0
             process.entry = process.deadline
             process.deadline = process.deadline + process.period
             
-
+        idle = False 
         q = pull + q
 
 

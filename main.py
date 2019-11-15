@@ -13,8 +13,12 @@ def queue(tasks):
         q.append( Parser(t) )
     return q
 
-def sort_edf(q):
+def sort_edf(q): #sort when using pop()
     q.sort(key=operator.attrgetter("deadline", "wcet1188"), reverse=True)
+    return q
+
+def sort(q): #sort without pop()
+    q.sort(key=operator.attrgetter("deadline", "wcet1188"))
     return q
 
 def edf(tasks, header):
@@ -52,14 +56,70 @@ def edf(tasks, header):
 
 def rm(tasks, header):
     q = queue(tasks)
+    q = sort(q)
     num = len(q)
-    power = header.power1188
-    for seconds in range(header.Exetime):
-        idle = False
+    schedule = [None] * header.Exetime #1,000 time units
+
+    #deadlines = (task.entry, task.deadline)
+    i = 0
+    for task in q:
+        for deadline in q:
+            deadlines = (task.entry,task.deadline)
+            print 
+            for i in range(header.Exetime):
+                if (schedule[i] == None):
+                    if (i >= task.deadline):
+                        print ("scheduling failed")
+                        break
+                    else:
+                        schedule[i] = task.task
+                        task.wcet1188 -= 1
+                        if (task.wcet1188 == 0):
+                            task.entry = task.deadline
+                            task.deadline += task.period
+                if (i == header.Exetime):
+                    continue       
+            #i += 1
+    print(schedule)
+
+        
+
+
+
+    #Create a deadline list in the format (start, deadline)
+        
+        # for deadline in deadlines:
+        #     start, deadline = deadline
+        #     for time in range(start, deadline):
+        #         if check none:
+        #             replace
+
+
+
+
+
+    """for i in range(num):
         q = sort_edf(q)
-        pull = []
-        for i in range(num):
-            process = q.pop()
+        process = q.pop()
+        new_list = []
+        for seconds in range(header.Exetime):
+            if (process.entry <= seconds):
+                print seconds, process.task, process.deadline
+                process.entry += 1
+                process.runTime += 1
+                new_list.append(process)
+                #break
+                if (process.runTime == process.wcet1188):
+                    process.runTime = 0
+                    process.entry = process.deadline
+                    process.deadline += process.period
+
+        q = new_list + q
+    """    
+
+
+        
+            
             
         
 

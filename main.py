@@ -35,6 +35,7 @@ def edf(tasks, header):
                 continue 
         #Reset for checking purposes     
         idle = False
+
         q = sort_edf(q)
         non_ready_task = []
         #Sorts through the queue in order to see which task to run next
@@ -82,9 +83,6 @@ def edf(tasks, header):
         seconds += 1
         #Returns the tasks that were popped to the not ready list back to the queue 
         q = non_ready_task + q
-        
-
-
 
 def main(argv):
     inputFile = ''

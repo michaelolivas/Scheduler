@@ -61,34 +61,40 @@ def rm(tasks, header):
     schedule = [None] * header.Exetime #1,000 time units
 
     i = 0
-    for task in q:
-        start = task.entry
-        deadline = task.deadline
-        execTime = task.wcet1188
-        for deads in range(deadline):
+    for task in q: #tasks in the queue
+        start = task.entry #arrival time
+        deadline = task.deadline #deadline
+        execTime = task.wcet1188 #execution time of the tasl
+        for deads in range(deadline): # not sure lol
             deadlines = (start, deadline)
-            for time in range(start, deadline):
-                if (time <= deadline):
-                    if (time < task.wcet1188 + start):
-                        if (schedule[time] == None):
-                            schedule[time] = task.task
-                            execTime -= 1
-                            print (task.task, time)
-                        if (schedule[time] != None):
-                            break
-            if (execTime < 0):
-                execTime = task.wcet1188
+            for time in range(start, deadline): #make sure time is within the arrival and deadline
+                deadlines = (start, deadline)
+                if (time <= deadline): # time is <= deadline
+                    #for w4, first iteration: 57 + 0
+                    #second iteration: 57 + 200, etc.
+                    if (time < task.wcet1188 + start): 
+                        if (schedule[time] == None): # if there is an open spot in the schedule
+                            schedule[time] = task.task #place task in open spot
+                            execTime -= 1 #remaining execution time
+                            print (task.task, time + 1) #for debugging
+                        elif (schedule[time] != None): #if spot is taken
+                            continue
+                if (execTime < 0): #no more time to execute
+                    execTime = task.wcet1188 #reset execution time
+                    if (time == len(schedule)): #if time reaches max size of schedule, reset to 0
+                        time = 0
+                        break
                 if (time == len(schedule)):
-                    break
-            start = deadline
-            deadline += task.deadline
-            deadlines = (start, deadline)
-            time = start
-            if (time == len(schedule)):
-                    break
+                    time = 0
+            start = deadline #reassign arrival/start time
+            deadline += task.deadline #reassign deadline
+            deadlines = (start, deadline) #put back in tuple
+            time = start #make new start time
+            if (deadline >= len(schedule)): #if the deadline time is mroe than 1000
+                deadline = len(schedule) #make final deadline 1000
         if (time == len(schedule)):
             time = 0
-        print(schedule)
+    print(schedule)
 
         
 

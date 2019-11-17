@@ -14,40 +14,59 @@ def queue(tasks):
     return q
 
 def sort_edf(q):
-    q.sort(key=operator.attrgetter("deadline", "wcet1188"), reverse=True)
+    q.sort(key=operator.attrgetter("deadline", "wcet1188","entry"), reverse=True)
     return q
 
 def edf(tasks, header):
     q = queue(tasks)
     num = len(q)
-    power = header.power1188
-    print(power)
-    for sec in range(header.Exetime): 
-        idle = False       
+    power = header.power1188 * 0.001
+    exe_time = 0
+    start_time = 0
+    end_time = 0
+    idle = False 
+    for sec in range(0, header.Exetime):
+        if(idle and sec in range(end_time)): continue
+        new_process = False      
         q = sort_edf(q)
         pull = []
         for i in range(num):
             process = q.pop()
+            if(i == 0):
+                end_time = process.entry
+            if(sec == 0): 
+                start_time = sec
+                previous_process = process
+            if(process.entry <= sec):
+                pull.append(process)
+                if (previous_process != process):
+                    new_process = True
+                    idle = False 
+                break
             if(process.entry > sec):
                 pull.append(process)
                 if(i == num-1):
-                    idle = True
+                    idle = True 
                     break
-                
-            if(process.entry <= sec):
-                pull.append(process)
-                break
+        if(previous_process == process and not new_process):
+            previous_process.runTime = previous_process.runTime + 1
+            exe_time = exe_time + 1
+            if(previous_process.runTime == previous_process.wcet1188): new_process = True
         if(idle):
+            print("{0} IDLE {1}".format(sec, end_time))
             q = pull + q 
-            print("{0} IDLE {1}".format(sec, sec+1))
             continue
-        if(process.entry <= sec):
-            process.runTime = process.runTime + 1
-            print(sec, process.task, process.runTime+sec)
-        if (process.runTime == process.wcet1188):
+        if(process.runTime == process.wcet1188):
             process.runTime = 0
             process.entry = process.deadline
             process.deadline = process.deadline + process.period
+        if(new_process or len(pull)==num):
+            exe_power = power * exe_time
+            if(exe_time != 0): print(start_time, previous_process.task,exe_time, exe_power)
+            start_time = sec
+            exe_time = 0
+            previous_process = process
+        idle = False 
         q = pull + q
 
 

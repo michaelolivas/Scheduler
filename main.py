@@ -84,8 +84,7 @@ def rm(tasks, header):
                             #     exit(1)
                             continue
                 if (execTime == 0): #no more time to execute
-                    #execTime = task.wcet1188 #reset execution time
-                    break
+                    execTime = task.wcet1188 #reset execution time
                     if (time == len(schedule)): #if time reaches max size of schedule, reset to 0
                         time = 0
                         break

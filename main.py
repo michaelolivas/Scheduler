@@ -60,27 +60,35 @@ def rm(tasks, header):
     num = len(q)
     schedule = [None] * header.Exetime #1,000 time units
 
-    #deadlines = (task.entry, task.deadline)
     i = 0
     for task in q:
-        for deadline in q:
-            deadlines = (task.entry,task.deadline)
-            print 
-            for i in range(header.Exetime):
-                if (schedule[i] == None):
-                    if (i >= task.deadline):
-                        print ("scheduling failed")
-                        break
-                    else:
-                        schedule[i] = task.task
-                        task.wcet1188 -= 1
-                        if (task.wcet1188 == 0):
-                            task.entry = task.deadline
-                            task.deadline += task.period
-                if (i == header.Exetime):
-                    continue       
-            #i += 1
-    print(schedule)
+        start = task.entry
+        deadline = task.deadline
+        execTime = task.wcet1188
+        for deads in range(deadline):
+            deadlines = (start, deadline)
+            for time in range(start, deadline):
+                if (time <= deadline):
+                    if (time < task.wcet1188 + start):
+                        if (schedule[time] == None):
+                            schedule[time] = task.task
+                            execTime -= 1
+                            print (task.task, time)
+                        if (schedule[time] != None):
+                            break
+            if (execTime < 0):
+                execTime = task.wcet1188
+                if (time == len(schedule)):
+                    break
+            start = deadline
+            deadline += task.deadline
+            deadlines = (start, deadline)
+            time = start
+            if (time == len(schedule)):
+                    break
+        if (time == len(schedule)):
+            time = 0
+        print(schedule)
 
         
 
@@ -92,30 +100,7 @@ def rm(tasks, header):
         #     start, deadline = deadline
         #     for time in range(start, deadline):
         #         if check none:
-        #             replace
-
-
-
-
-
-    """for i in range(num):
-        q = sort_edf(q)
-        process = q.pop()
-        new_list = []
-        for seconds in range(header.Exetime):
-            if (process.entry <= seconds):
-                print seconds, process.task, process.deadline
-                process.entry += 1
-                process.runTime += 1
-                new_list.append(process)
-                #break
-                if (process.runTime == process.wcet1188):
-                    process.runTime = 0
-                    process.entry = process.deadline
-                    process.deadline += process.period
-
-        q = new_list + q
-    """    
+        #             replace 
 
 
         

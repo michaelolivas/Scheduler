@@ -1,5 +1,6 @@
 import sys, getopt, operator
 from Parser import Parser, Header
+from itertools import groupby
 
 
 def parse_tasks(inputFile):
@@ -67,8 +68,10 @@ def rm(tasks, header):
         execTime = task.wcet1188 #execution time of the tasl
         for deads in range(deadline): # not sure lol
             deadlines = (start, deadline)
+
             for time in range(start, deadline): #make sure time is within the arrival and deadline
                 deadlines = (start, deadline)
+
                 if (time <= deadline): # time is <= deadline
                     #for w4, first iteration: 57 + 0
                     #second iteration: 57 + 200, etc.
@@ -76,50 +79,58 @@ def rm(tasks, header):
                         if (schedule[time] == None): # if there is an open spot in the schedule
                             schedule[time] = task.task #place task in open spot
                             execTime -= 1 #remaining execution time
-                            print (deadline, task.task, time + 1, execTime) #for debugging
+                            #rint (deadline, task.task, time + 1, execTime) #for debugging
+
                         elif (schedule[time] != None): #if spot is taken
                             start = time + 1
-                            # if (execTime != 0):
-                            #     print ("Scheduling Failed at time {0}".format(time))
-                            #     exit(1)
                             continue
+
                 if (execTime == 0): #no more time to execute
                     execTime = task.wcet1188 #reset execution time
+                    #print (deadline, task.task, time + 1, execTime) #for debugging
                     if (time == len(schedule)): #if time reaches max size of schedule, reset to 0
                         time = 0
                         break
                     break
-                # if (time == len(schedule)):
-                #     time = 0
+
             if (execTime == 0):
                 execTime = task.wcet1188
-            # if (execTime != 0 and time < start):
-            #     print ("Scheduling Failed at time {0}".format(time))
-            #     exit(1)
+                
+            if (execTime != 0 and time < start):
+                if (time == len(schedule) - 1):
+                    time = 0
+                    break
+                else:
+                    print ("\n---------Scheduling Failed at time {0}---------\n".format(time))
+                    #print (schedule)
+                    exit(1)
+
             start = deadline #reassign arrival/start time
             deadline += task.deadline #reassign deadline
             deadlines = (start, deadline) #put back in tuple
             time = start #make new start time
+
             if (deadline >= len(schedule)): #if the deadline time is mroe than 1000
                 deadline = len(schedule) #make final deadline 1000
-        if (time == len(schedule)):
-            time = 0
-    print(schedule)
+    #IDLE states
+    for i in range(len(schedule)):
+        if (schedule[i] == None):
+            schedule[i] = "IDLE"
+
+    print (schedule)
+
+    start = 1
+    burst = 0
+    print ("start \t task \t execution")
+    for key, data in groupby(schedule):
+        burst = len(list(data))
+        print('{0} \t {1} \t {2}'.format(start, key, burst))
+        start += burst
+                
+
 
         
 
-
-
-    #Create a deadline list in the format (start, deadline)
-        
-        # for deadline in deadlines:
-        #     start, deadline = deadline
-        #     for time in range(start, deadline):
-        #         if check none:
-        #             replace 
-
-
-        
             
             
         

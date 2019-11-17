@@ -76,16 +76,27 @@ def rm(tasks, header):
                         if (schedule[time] == None): # if there is an open spot in the schedule
                             schedule[time] = task.task #place task in open spot
                             execTime -= 1 #remaining execution time
-                            print (task.task, time + 1) #for debugging
+                            print (deadline, task.task, time + 1, execTime) #for debugging
                         elif (schedule[time] != None): #if spot is taken
+                            start = time + 1
+                            # if (execTime != 0):
+                            #     print ("Scheduling Failed at time {0}".format(time))
+                            #     exit(1)
                             continue
-                if (execTime < 0): #no more time to execute
-                    execTime = task.wcet1188 #reset execution time
+                if (execTime == 0): #no more time to execute
+                    #execTime = task.wcet1188 #reset execution time
+                    break
                     if (time == len(schedule)): #if time reaches max size of schedule, reset to 0
                         time = 0
                         break
-                if (time == len(schedule)):
-                    time = 0
+                    break
+                # if (time == len(schedule)):
+                #     time = 0
+            if (execTime == 0):
+                execTime = task.wcet1188
+            # if (execTime != 0 and time < start):
+            #     print ("Scheduling Failed at time {0}".format(time))
+            #     exit(1)
             start = deadline #reassign arrival/start time
             deadline += task.deadline #reassign deadline
             deadlines = (start, deadline) #put back in tuple

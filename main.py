@@ -19,11 +19,61 @@ def sort_edf(q):
     return q
 
 def sort(q): #sort without pop()
-    q.sort(key=operator.attrgetter("deadline", "wcet1188"))
+    q.sort(key=operator.attrgetter("deadline", "entry"))
     return q
 
-def edf(tasks, header):
+def ee(tasks, header):
     q = queue(tasks)
+    processes = [[] for i in range(len(q))]
+    worker = [0]*len(q)
+    i=0
+    for t in q:
+        process_power_list=[]
+        power = float(float(t.wcet1188)*float(header.power1188))
+        process_power_list.append((power, 1188,float(float(t.wcet1188)/float(t.deadline)) ,t.wcet1188, t))
+        power =  float(float(t.wcet918)*float(header.power918))
+        process_power_list.append((power, 918,float(float(t.wcet918)/float(t.deadline)) ,t.wcet918, t))
+        power =  float(float(t.wcet648)*float(header.power648))
+        process_power_list.append((power, 648,float(float(t.wcet648)/float(t.deadline)) ,t.wcet648, t))
+        power =  float(float(t.wcet384)*float(header.power384))
+        process_power_list.append((power, 384,float(float(t.wcet384)/float(t.deadline)), t.wcet384, t))
+        process_power_list.sort()
+        processes[i]=process_power_list
+        i +=1
+    ee_found = False
+    while not ee_found:
+        inequality = 0
+        for x in processes:
+            inequality += x[0][2]
+            print(inequality)
+        if(inequality > 1):
+            min = 1
+            for x in processes:
+                val = x[1][2] - x[0][2]
+                if(val<min): 
+                    min=val
+                    next_hz = x
+            save = next_hz[0]
+            for i in range(len(next_hz)-1):
+                next_hz[i] = next_hz[i+1]
+            next_hz[len(next_hz)-1]=save
+            continue
+        if(inequality <= 1):
+            ee_list = []
+            for x in processes:
+                ee_list.append(x[0][4])
+                x[0][4].hz = x[0][1]
+                x[0][4].wcet = x[0][3]
+                print(x[0][4].hz,x[0][4].wcet)
+            print(inequality)
+            print("Sucess")
+            print(ee_list)
+            ee_found = True
+    return ee_list
+
+
+    
+def edf(q, header):
     non_ready_task = []
     num = len(q)
     entry = 0
@@ -53,8 +103,8 @@ def edf(tasks, header):
                 process.runTime = process.runTime + 1
                 exec_time +=1  
                 #Checks if the process has reached it's execution time
-                if(next_process.runTime == next_process.wcet1188):
-                    print("{0} {1} 1188 {2} {3}".format(entry+1, process.task, exec_time, header.power1188*exec_time))
+                if(next_process.runTime == next_process.wcet):
+                    print("{0} {1} {2} {3} {4}".format(entry+1, process.task, process.hz , exec_time, header.power1188*exec_time))
                     entry = entry+exec_time
                     seconds = entry
                     exec_time = 0
@@ -67,7 +117,7 @@ def edf(tasks, header):
                 elif(next_process != process): 
                     if(exec_time != 1):
                         exec_time -=1
-                        print("{0} {1} 1188 {2} {3}".format(entry+1, next_process.task, exec_time, header.power1188*exec_time))
+                        print("{0} {1} {2} {3} {4}".format(entry+1, next_process.task, process.hz ,exec_time, header.power1188*exec_time))
                         entry = entry+exec_time
                         seconds = entry
                         exec_time = 1
@@ -89,8 +139,7 @@ def edf(tasks, header):
         #Returns the tasks that were popped to the not ready list back to the queue 
         q = non_ready_task + q
 
-def rm(tasks, header):
-    q = queue(tasks)
+def rm(q, header):
     q = sort(q)
     num = len(q)
     schedule = [None] * header.Exetime #1,000 time units
@@ -99,7 +148,7 @@ def rm(tasks, header):
     for task in q: #tasks in the queue
         start = task.entry #arrival time
         deadline = task.deadline #deadline
-        execTime = task.wcet1188 #execution time of the tasl
+        execTime = task.wcet #execution time of the tasl
         for deads in range(deadline): # not sure lol
             #make sure time is within the arrival and deadline
             for time in range(start, deadline):
@@ -108,7 +157,7 @@ def rm(tasks, header):
                 if (time <= deadline): # time is <= deadline
                     #for w4, first iteration: 57 + 0
                     #second iteration: 57 + 200, etc.
-                    if (time < task.wcet1188 + start): 
+                    if (time < task.wcet + start): 
                         if (schedule[time] == None): # if there is an open spot in the schedule
                             schedule[time] = task.task #place task in open spot
                             execTime -= 1 #remaining execution time
@@ -118,7 +167,7 @@ def rm(tasks, header):
                             continue
 
                 if (execTime == 0): #no more time to execute
-                    execTime = task.wcet1188 #reset execution time
+                    execTime = task.wcet #reset execution time
                     #print (deadline, task.task, time + 1, execTime) #for debugging
                     if (time == len(schedule)): #if time reaches max size of schedule, reset to 0
                         time = 0
@@ -126,7 +175,7 @@ def rm(tasks, header):
                     break
 
             if (execTime == 0):
-                execTime = task.wcet1188 #reset execution time to original time
+                execTime = task.wcet #reset execution time to original time
                 
             if (execTime != 0 and time < start): #if end of schedule length is reached, reset time counter
                 if (time == len(schedule) - 1):
@@ -192,12 +241,15 @@ def main(argv):
     
     #Parses the input file of listed tasks 
     tasks, header = parse_tasks(inputFile)
+    q = queue(tasks)
+    if(EE):
+        new_tasks = ee(tasks, header)
+        edf(new_tasks, header)
+    elif(sched == 'edf'):
+        edf(q, header)
+    elif(sched == 'rm'):
+        rm(q, header)
     
-
-    if(sched == 'edf'):
-        edf(tasks, header)
-    if(sched == 'rm'):
-        rm(tasks, header)
     
 
 if __name__== "__main__":

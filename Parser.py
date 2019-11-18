@@ -18,11 +18,11 @@ class Header:
     def __init__(self,task):
         self.task = str(task[0])
         self.Exetime = int(task[1])
-        self.power1188 = int(task[2])
-        self.power918 = int(task[3])
-        self.power648 = int(task[4])
-        self.power384 = int(task[5]) 
-        self.idle = int(task[6]) 
+        self.power1188 = int(task[2])*0.001
+        self.power918 = int(task[3])*0.001
+        self.power648 = int(task[4])*0.001
+        self.power384 = int(task[5]) *0.001
+        self.idle = int(task[6])*0.001
 
     def __str__(self):
         return ('Task: {0}  Execution: {1}  Power@1188: {2}  Power@918: {3}  Power@648: {4}  Power@384: {5} Power@IDEL: {6}'

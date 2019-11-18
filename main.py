@@ -67,10 +67,9 @@ def rm(tasks, header):
         deadline = task.deadline #deadline
         execTime = task.wcet1188 #execution time of the tasl
         for deads in range(deadline): # not sure lol
-            deadlines = (start, deadline)
-
-            for time in range(start, deadline): #make sure time is within the arrival and deadline
-                deadlines = (start, deadline)
+            #make sure time is within the arrival and deadline
+            for time in range(start, deadline):
+                deadlines = (start, deadline) #used for debugging, to make sure new start and end time was generated
 
                 if (time <= deadline): # time is <= deadline
                     #for w4, first iteration: 57 + 0
@@ -79,7 +78,6 @@ def rm(tasks, header):
                         if (schedule[time] == None): # if there is an open spot in the schedule
                             schedule[time] = task.task #place task in open spot
                             execTime -= 1 #remaining execution time
-                            #rint (deadline, task.task, time + 1, execTime) #for debugging
 
                         elif (schedule[time] != None): #if spot is taken
                             start = time + 1
@@ -94,15 +92,14 @@ def rm(tasks, header):
                     break
 
             if (execTime == 0):
-                execTime = task.wcet1188
+                execTime = task.wcet1188 #reset execution time to original time
                 
-            if (execTime != 0 and time < start):
+            if (execTime != 0 and time < start): #if end of schedule length is reached, reset time counter
                 if (time == len(schedule) - 1):
                     time = 0
                     break
-                else:
+                else: #if scheduling fails
                     print ("\n---------Scheduling Failed at time {0}---------\n".format(time))
-                    #print (schedule)
                     exit(1)
 
             start = deadline #reassign arrival/start time
@@ -112,28 +109,29 @@ def rm(tasks, header):
 
             if (deadline >= len(schedule)): #if the deadline time is mroe than 1000
                 deadline = len(schedule) #make final deadline 1000
+    
     #IDLE states
     for i in range(len(schedule)):
         if (schedule[i] == None):
             schedule[i] = "IDLE"
 
-    print (schedule)
-
+    #printing
     start = 1
     burst = 0
-    print ("start \t task \t execution")
+    active_power = 625
+    energy = 0
+    idle_power = 84
+    print ("start \t task \t hertz \t exec \t energy \n------------------------------------------")
     for key, data in groupby(schedule):
         burst = len(list(data))
-        print('{0} \t {1} \t {2}'.format(start, key, burst))
+        if (key == 'IDLE'):
+            hertz = "IDLE"
+            energy = idle_power * burst * 0.001
+        else:
+            hertz = 1188
+            energy = active_power * burst * 0.001
+        print('{0} \t {1} \t {2} \t {3} \t {4}\tJ'.format(start, key , hertz, burst, energy))
         start += burst
-                
-
-
-        
-
-            
-            
-        
 
 
 def main(argv):

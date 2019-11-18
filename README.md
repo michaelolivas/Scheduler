@@ -1,6 +1,7 @@
 # RM and EDF Scheduler
 
 To Run:
+
 main.py -i <inputfile> -s <edf/rm> -e
 
 - You want to run main.py

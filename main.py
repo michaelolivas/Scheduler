@@ -104,13 +104,8 @@ def edf(q, header):
                 process.runTime = process.runTime + 1
                 exec_time +=1  
                 #Checks if the process has reached it's execution time
-<<<<<<< HEAD
                 if(next_process.runTime == next_process.wcet):
-                    print("{0} {1} {2} {3} {4}".format(entry+1, process.task, process.hz , exec_time, header.power1188*exec_time))
-=======
-                if(next_process.runTime == next_process.wcet1188):
-                    print("{0} \t {1} \t 1188 \t {2} \t {3}\t J".format(entry+1, process.task, exec_time, header.power1188*exec_time))
->>>>>>> 24246796afc94b918125a176ef5875f6feb45151
+                    print("{0} \t {1} \t {2} \t {3} \t {4}\t J".format(entry+1, process.task, process.hz, exec_time, header.power1188*exec_time))
                     entry = entry+exec_time
                     seconds = entry
                     exec_time = 0
@@ -123,11 +118,7 @@ def edf(q, header):
                 elif(next_process != process): 
                     if(exec_time != 1):
                         exec_time -=1
-<<<<<<< HEAD
-                        print("{0} {1} {2} {3} {4}".format(entry+1, next_process.task, process.hz ,exec_time, header.power1188*exec_time))
-=======
-                        print("{0} \t {1} \t 1188 \t {2} \t {3}\t J".format(entry+1, next_process.task, exec_time, header.power1188*exec_time))
->>>>>>> 24246796afc94b918125a176ef5875f6feb45151
+                        print("{0} \t {1} \t {2} \t {3} \t {4}\t J".format(entry+1, next_process.task, process.hz, exec_time, header.power1188*exec_time))
                         entry = entry+exec_time
                         seconds = entry
                         exec_time = 1

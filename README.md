@@ -2,7 +2,7 @@
 
 To Run:
 
-main.py -i <inputfile> -s <edf/rm> -e
+python main.py -i <inputfile> -s <edf/rm> -e
 
 - You want to run main.py
 - The -i indicator tells what input file to use. Either input1.txt or input2.txt

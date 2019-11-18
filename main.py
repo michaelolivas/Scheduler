@@ -81,6 +81,7 @@ def edf(q, header):
     idle = False
     exec_time = 0
     seconds = 0
+    print ("start \t task \t hertz \t exec \t energy \n------------------------------------------")
     #Runs for the entire execution time desired
     while seconds < header.Exetime:
         #If it's Idle, stay Idle until next available entry
@@ -103,8 +104,13 @@ def edf(q, header):
                 process.runTime = process.runTime + 1
                 exec_time +=1  
                 #Checks if the process has reached it's execution time
+<<<<<<< HEAD
                 if(next_process.runTime == next_process.wcet):
                     print("{0} {1} {2} {3} {4}".format(entry+1, process.task, process.hz , exec_time, header.power1188*exec_time))
+=======
+                if(next_process.runTime == next_process.wcet1188):
+                    print("{0} \t {1} \t 1188 \t {2} \t {3}\t J".format(entry+1, process.task, exec_time, header.power1188*exec_time))
+>>>>>>> 24246796afc94b918125a176ef5875f6feb45151
                     entry = entry+exec_time
                     seconds = entry
                     exec_time = 0
@@ -117,7 +123,11 @@ def edf(q, header):
                 elif(next_process != process): 
                     if(exec_time != 1):
                         exec_time -=1
+<<<<<<< HEAD
                         print("{0} {1} {2} {3} {4}".format(entry+1, next_process.task, process.hz ,exec_time, header.power1188*exec_time))
+=======
+                        print("{0} \t {1} \t 1188 \t {2} \t {3}\t J".format(entry+1, next_process.task, exec_time, header.power1188*exec_time))
+>>>>>>> 24246796afc94b918125a176ef5875f6feb45151
                         entry = entry+exec_time
                         seconds = entry
                         exec_time = 1
@@ -132,7 +142,7 @@ def edf(q, header):
                 non_ready_task.append(process)
                 #If it has checked the whole queue then, all asks are not ready. Therefore, Idle.
                 if(x == num -1): 
-                    print ("{0} IDLE IDLE {1} {2}".format(seconds, next_entry - seconds, header.idle*(next_entry - seconds)))
+                    print ("{0} \t IDLE \t IDLE \t {1} \t {2}\t J".format(seconds, next_entry - seconds, header.idle*(next_entry - seconds)))
                     entry = next_entry - 1
                     idle = True
         seconds += 1
@@ -143,8 +153,8 @@ def rm(q, header):
     q = sort(q)
     num = len(q)
     schedule = [None] * header.Exetime #1,000 time units
-
     i = 0
+
     for task in q: #tasks in the queue
         start = task.entry #arrival time
         deadline = task.deadline #deadline
@@ -201,18 +211,18 @@ def rm(q, header):
     #printing
     start = 1
     burst = 0
-    active_power = 625
+    active_power = header.power1188
     energy = 0
-    idle_power = 84
+    idle_power = header.idle
     print ("start \t task \t hertz \t exec \t energy \n------------------------------------------")
     for key, data in groupby(schedule):
         burst = len(list(data))
         if (key == 'IDLE'):
             hertz = "IDLE"
-            energy = idle_power * burst * 0.001
+            energy = idle_power * burst
         else:
             hertz = 1188
-            energy = active_power * burst * 0.001
+            energy = active_power * burst
         print('{0} \t {1} \t {2} \t {3} \t {4}\tJ'.format(start, key , hertz, burst, energy))
         start += burst
 
@@ -226,7 +236,7 @@ def main(argv):
     try:
         opts, arg = getopt.getopt(argv,"hi:s:e", ["help","inFile=", "schedule=", "energy"])
     except getopt.GetoptError:
-        print ('test.py -i <inputfile> -s <edf/rm> -e')
+        print ('main.py -i <inputfile> -s <edf/rm> -e')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):

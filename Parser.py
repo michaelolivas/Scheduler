@@ -7,6 +7,7 @@ class Parser:
         self.wcet648 = int(task[4])
         self.wcet384 = int(task[5]) 
         self.period = self.deadline
+        self.power = None
         self.hz=1188
         self.wcet=self.wcet1188
         self.runTime=0
